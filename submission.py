@@ -12,20 +12,7 @@ import torch.optim as optim
 from torch.utils.data import Subset,ConcatDataset,random_split
 
 
-import subprocess
-import sys
 
-# Fonction pour installer un package
-def install_package(package):
-    try:
-        # Appeler pip pour installer le package
-        subprocess.check_call([sys.executable, "-m", "pip", "install", package])
-        print(f"Package '{package}' installé avec succès.")
-    except subprocess.CalledProcessError as e:
-        print(f"Échec de l'installation du package '{package}': {e}")
-
-# Exemple : Installer numpy
-install_package("albumentations")
 
 import albumentations as A
 
