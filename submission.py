@@ -113,24 +113,7 @@ class ObjectDetector:
                     self.transform=transform
                     self.preload=True
                     self.train=train
-                else : 
-                    self.x=None
-                    self.y=None
-                    self.preload=False 
-                    self.transform=transform
-                    self.train=train
-                    if path is None : 
-                        raise     Exception("preload est fixé à False, mais aucun chemin n'est spécifié")
-                    self.path=path
-                    list_attempts_=os.listdir(path)
-                    self.list_x_names = list() 
-                    for i in  range(len(list_attempts_)) :
-                        if list_attempts_[i].split("_")[2]=="00.pkl" : 
-
-                            list_attempts_[i]= list_attempts_[i].split("_")[0] +"_"+ list_attempts_[i].split("_")[1]
-                            if list_attempts_[i] not in self.list_x_names :
-                                self.list_x_names.append(list_attempts_[i])
-
+                
                     
 
             def __len__(self) : 
@@ -201,43 +184,7 @@ class ObjectDetector:
                             y=None
                             img=self.process_x_y(x,y)
                             return img
-                else: 
-
-                    name_idx = self.list_x_names[idx]
-                    diag0_path = os.path.join(self.path ,(name_idx + "_00.pkl"))
-                    diag1_path = os.path.join(self.path, (name_idx + "_01.pkl"))
-                    diag0_lbl_path = os.path.join(self.path, (name_idx + "_00.txt"))
-                    diag1_lbl_path = os.path.join(self.path, (name_idx + "_01.txt"))
-                                                
-
-                        # Load the diagnostic files
-                    with open(diag0_path, 'rb') as f:
-                        diag_0 = pickle.load(f)
-                    with open(diag1_path, 'rb') as f:
-                        diag_1 = pickle.load(f)
-
-                    diag_0_data = diag_0['data']
-                    diag_1_data = diag_1['data']
-                    combined_diag = {'data' : np.stack([diag_0_data, diag_1_data], axis=0)}
-                    if self.train :
-                        example_annotations = []
-                        for label_file in [diag0_lbl_path, diag1_lbl_path]:
-                            if os.path.exists(label_file):
-                                with open(label_file, 'r') as f:
-                                    for line in f:
-                                        parts = line.split()
-                                        class_id = int(parts[0])
-                                        x_center, y_center, width, height = map(
-                                            float, parts[1:5])
-                                        example_annotations.append({
-                                            'bbox': [x_center, y_center, width, height],
-                                            'class': class_id
-                                        })
-                        img,target=self.process_x_y(combined_diag,example_annotations)
-                        return img, target
-                    else :
-                        img=self.process_x_y(combined_diag,None) 
-                        return img 
+                
                 
         class dataset_LWAS_2_augmented(torch.utils.data.Dataset) : 
 
@@ -249,25 +196,7 @@ class ObjectDetector:
                     self.preload=True
                     self.train=train
                     self.augmentation=augmentation
-                else : 
-                    self.augmentation=augmentation
-                    self.x=None
-                    self.y=None
-                    self.preload=False 
-                    self.transform=transform
-                    self.train=train
-                    if path is None : 
-                        raise     Exception("preload est fixé à False, mais aucun chemin n'est spécifié")
-                    self.path=path
-                    list_attempts_=os.listdir(path)
-                    self.list_x_names = list() 
-                    for i in  range(len(list_attempts_)) :
-                        if list_attempts_[i].split("_")[2]=="00.pkl" : 
-
-                            list_attempts_[i]= list_attempts_[i].split("_")[0] +"_"+ list_attempts_[i].split("_")[1]
-                            if list_attempts_[i] not in self.list_x_names :
-                                self.list_x_names.append(list_attempts_[i])
-
+              
                     
 
             def __len__(self) : 
@@ -358,44 +287,7 @@ class ObjectDetector:
                             y=None
                             img=self.process_x_y(x,y)
                             return img
-                else: 
-
-                    name_idx = self.list_x_names[idx]
-                    diag0_path = os.path.join(self.path ,(name_idx + "_00.pkl"))
-                    diag1_path = os.path.join(self.path, (name_idx + "_01.pkl"))
-                    diag0_lbl_path = os.path.join(self.path, (name_idx + "_00.txt"))
-                    diag1_lbl_path = os.path.join(self.path, (name_idx + "_01.txt"))
-                                                
-
-                        # Load the diagnostic files
-                    with open(diag0_path, 'rb') as f:
-                        diag_0 = pickle.load(f)
-                    with open(diag1_path, 'rb') as f:
-                        diag_1 = pickle.load(f)
-
-                    diag_0_data = diag_0['data']
-                    diag_1_data = diag_1['data']
-                    combined_diag = {'data' : np.stack([diag_0_data, diag_1_data], axis=0)}
-                    print(111)
-                    if self.train :
-                        example_annotations = []
-                        for label_file in [diag0_lbl_path, diag1_lbl_path]:
-                            if os.path.exists(label_file):
-                                with open(label_file, 'r') as f:
-                                    for line in f:
-                                        parts = line.split()
-                                        class_id = int(parts[0])
-                                        x_center, y_center, width, height = map(
-                                            float, parts[1:5])
-                                        example_annotations.append({
-                                            'bbox': [x_center, y_center, width, height],
-                                            'class': class_id
-                                        })
-                        img,target=self.process_x_y(combined_diag,example_annotations)
-                        return img, target
-                    else :
-                        img=self.process_x_y(combined_diag,None) 
-                        return img 
+               
 
         # Create dataset
         dataset = dataset_LWAS_2(transform=transformer,X=X,Y=y,preload=True,path=None,train=True)
